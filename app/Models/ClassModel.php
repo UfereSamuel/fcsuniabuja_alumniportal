@@ -14,6 +14,7 @@ class ClassModel extends Model
     protected $table = 'classes';
 
     protected $fillable = [
+        'name',
         'graduation_year',
         'slogan',
         'description',
@@ -27,6 +28,14 @@ class ClassModel extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Scope a query to only include active classes.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
     /**
      * Get the members of this class.
@@ -76,5 +85,13 @@ class ClassModel extends Model
     public function getNameAttribute(): string
     {
         return $this->full_name;
+    }
+
+    /**
+     * Get the WhatsApp groups for this class.
+     */
+    public function whatsappGroups(): HasMany
+    {
+        return $this->hasMany(WhatsAppGroup::class, 'class_id');
     }
 }

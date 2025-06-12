@@ -21,6 +21,8 @@ use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\WhatsAppGroupController;
+use App\Http\Controllers\DocumentController as PublicDocumentController;
+use App\Http\Controllers\Admin\ClassController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -30,6 +32,13 @@ Route::get('/about/mission', [AboutController::class, 'mission'])->name('about.m
 Route::get('/about/identity', [AboutController::class, 'identity'])->name('about.identity');
 Route::get('/executives', [HomeController::class, 'executives'])->name('executives');
 Route::get('/board-members', [HomeController::class, 'boardMembers'])->name('board-members');
+
+// Public Documents Routes
+Route::prefix('documents')->name('documents.')->group(function () {
+    Route::get('/', [PublicDocumentController::class, 'index'])->name('index');
+    Route::get('/{document}', [PublicDocumentController::class, 'show'])->name('show');
+    Route::get('/{document}/download', [PublicDocumentController::class, 'download'])->name('download');
+});
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -106,6 +115,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     // Zone Role Management
     Route::resource('zone-roles', ZoneRoleController::class);
     Route::patch('zone-roles/{zoneRole}/toggle-status', [ZoneRoleController::class, 'toggleStatus'])->name('zone-roles.toggle-status');
+
+    // Class Management
+    Route::resource('classes', ClassController::class);
+    Route::patch('classes/{class}/toggle-status', [ClassController::class, 'toggleStatus'])->name('classes.toggle-status');
+    Route::get('classes/{class}/members', [ClassController::class, 'members'])->name('classes.members');
 
     // Payment Management
     Route::prefix('payments')->name('payments.')->group(function () {

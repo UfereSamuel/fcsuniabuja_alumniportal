@@ -170,8 +170,8 @@
                 <!-- Term Information -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label for="term_start" class="block text-sm font-medium text-gray-700 mb-1">Term Start Date *</label>
-                        <input type="date" name="term_start" id="term_start" value="{{ old('term_start') }}" required
+                        <label for="term_start" class="block text-sm font-medium text-gray-700 mb-1">Term Start Date</label>
+                        <input type="date" name="term_start" id="term_start" value="{{ old('term_start') }}"
                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('term_start') border-red-500 @enderror">
                         @error('term_start')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -189,8 +189,8 @@
                     </div>
 
                     <div>
-                        <label for="term_year" class="block text-sm font-medium text-gray-700 mb-1">Term Year *</label>
-                        <select name="term_year" id="term_year" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('term_year') border-red-500 @enderror">
+                        <label for="term_year" class="block text-sm font-medium text-gray-700 mb-1">Term Year</label>
+                        <select name="term_year" id="term_year" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('term_year') border-red-500 @enderror">
                             <option value="">Select Year</option>
                             @for($year = date('Y') + 2; $year >= 2020; $year--)
                                 <option value="{{ $year }}" {{ old('term_year', date('Y')) == $year ? 'selected' : '' }}>{{ $year }}</option>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Executive;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ExecutiveController extends Controller
 {
@@ -16,7 +17,7 @@ class ExecutiveController extends Controller
     {
         $this->middleware('auth');
         $this->middleware(function ($request, $next) {
-            if (!auth()->user()->isAdmin()) {
+            if (!Auth::check() || !Auth::user()->isAdmin()) {
                 abort(403, 'Access denied. Admin privileges required.');
             }
             return $next($request);
@@ -75,13 +76,12 @@ class ExecutiveController extends Controller
             'bio' => ['nullable', 'string'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'sort_order' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'is_active' => ['boolean'],
         ]);
 
         $executiveData = $request->all();
-        $executiveData['created_by'] = auth()->id();
+        $executiveData['created_by'] = Auth::id();
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -100,7 +100,14 @@ class ExecutiveController extends Controller
      */
     public function show(Executive $executive)
     {
-        return view('admin.executives.show', compact('executive'));
+        // Get other executives (excluding the current one)
+        $otherExecutives = Executive::where('id', '!=', $executive->id)
+                                  ->active()
+                                  ->ordered()
+                                  ->take(5)
+                                  ->get();
+
+        return view('admin.executives.show', compact('executive', 'otherExecutives'));
     }
 
     /**
@@ -122,7 +129,6 @@ class ExecutiveController extends Controller
             'bio' => ['nullable', 'string'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'sort_order' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'is_active' => ['boolean'],
         ]);
